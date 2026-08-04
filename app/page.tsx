@@ -7,21 +7,26 @@ async function getSortedPostsData() {
   const postsDirectory = path.join(process.cwd(), "posts");
   const filenames = await fs.readdir(postsDirectory);
 
-  const allPostsData = filenames.map((filename) => {
-    const slug = filename.replace(/\.md$/, "");
-    const fullPath = path.join(postsDirectory, filename);
-    const fileContents = fs.readFile(fullPath, "utf8");
-    const matterResult = matter(fileContents);
+  // We use Promise.all to handle the async reads properly
+  const allPostsData = await Promise.all(
+    filenames.map(async (filename) => {
+      const slug = filename.replace(/\.md$/, "");
+      const fullPath = path.join(postsDirectory, filename);
 
-    return {
-      slug,
-      ...(matterResult.data as {
-        title: string;
-        date: string;
-        description: string;
-      }),
-    };
-  });
+      // CRITICAL FIX: Add 'await' here!
+      const fileContents = await fs.readFile(fullPath, "utf8");
+      const matterResult = matter(fileContents);
+
+      return {
+        slug,
+        ...(matterResult.data as {
+          title: string;
+          date: string;
+          description: string;
+        }),
+      };
+    }),
+  );
 
   // Sort posts by date (newest first)
   return allPostsData.sort((a, b) => (a.date < b.date ? 1 : -1));
