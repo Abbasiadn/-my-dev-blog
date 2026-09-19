@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
+import { useEffect, useRef, useState } from "react";
 
 export default function AnimateOnScroll({
   children,
@@ -11,10 +11,26 @@ export default function AnimateOnScroll({
   delay?: number;
   className?: string;
 }) {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <motion.div

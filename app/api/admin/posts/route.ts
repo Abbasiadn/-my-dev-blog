@@ -1,6 +1,6 @@
 // app/api/admin/posts/route.ts
 import { NextResponse } from "next/server";
-import { getAllPosts } from "@/lib/posts-admin";
+import { createPost, getAllPosts } from "@/lib/posts-admin";
 
 export const dynamic = "force-dynamic";
 

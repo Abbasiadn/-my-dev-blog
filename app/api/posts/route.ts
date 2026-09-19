@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     const markdownPosts = await getMarkdownPosts();
     
     // Combine both sources
-    posts = [...posts, ...markdownPosts];
+    posts = [...posts, ...markdownPosts] as typeof posts;
 
     // Filter by category
     if (category && category !== "All") {
@@ -85,7 +85,11 @@ export async function POST(request: Request) {
     }
 
     // Check if user is blocked
-    if (session.role === "user" && session.status === "blocked") {
+    if (
+      session.role === "user" &&
+      "status" in session &&
+      session.status === "blocked"
+    ) {
       return NextResponse.json(
         { error: "Your account has been blocked. Contact an administrator." },
         { status: 403 }
