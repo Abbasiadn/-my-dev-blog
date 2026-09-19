@@ -1,14 +1,16 @@
+// next.config.ts
 import type { NextConfig } from "next";
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: 'export',  // This tells Next.js to build static HTML files
+const nextConfig: NextConfig = {
+  // output: 'export',
   images: {
-    unoptimized: true, // GitHub Pages doesn't support Next.js image optimization
+    unoptimized: true,
   },
-  // Important: Change this to your actual GitHub repo name!
-  basePath: '/my-dev-blog', 
+  basePath: '/my-dev-blog',
   assetPrefix: '/my-dev-blog',
-}
+  env: {
+    NEXT_PUBLIC_BASE_PATH: '/my-dev-blog',
+  },
+};
 
-module.exports = nextConfig
+export default nextConfig;

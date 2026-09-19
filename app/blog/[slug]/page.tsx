@@ -6,15 +6,7 @@ import { remark } from "remark";
 import remarkHtml from "remark-html";
 import Link from "next/link";
 import type { Metadata } from "next";
-import {
-  ArrowLeft,
-  Calendar,
-  Clock,
-  Sparkles,
-  Share2,
-  Bookmark,
-} from "lucide-react";
-import PostContent from "@/components/PostContent";
+import BlogDetailClient from "@/components/BlogDetailClient";
 
 export async function generateStaticParams() {
   try {
@@ -40,7 +32,6 @@ async function getPostData(slug: string) {
       .process(matterResult.content);
     const contentHtml = processedContent.toString();
 
-    // Calculate reading time
     const wordCount = matterResult.content.trim().split(/\s+/).length;
     const readingTime = Math.ceil(wordCount / 200);
 
@@ -84,7 +75,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function PostPage({
+export default async function BlogDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -92,26 +83,5 @@ export default async function PostPage({
   const { slug } = await params;
   const postData = await getPostData(slug);
 
-  if (!postData) {
-    return (
-      <main className="min-h-screen flex items-center justify-center px-6">
-        <div className="text-center max-w-md">
-          <div className="w-16 h-16 rounded-full bg-lavender/20 flex items-center justify-center mx-auto mb-6">
-            <Sparkles className="w-8 h-8 text-lavender-deep" />
-          </div>
-          <h1 className="font-serif text-3xl mb-4">Post Not Found</h1>
-          <p className="text-ink-soft mb-8">
-            This post may have been moved or is a user-created post stored in
-            your browser.
-          </p>
-          <Link href="/" className="btn-pill">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
-        </div>
-      </main>
-    );
-  }
-
-  return <PostContent post={postData} />;
+  return <BlogDetailClient post={postData} />;
 }
